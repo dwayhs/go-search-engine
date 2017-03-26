@@ -2,12 +2,12 @@ package tokenizers
 
 import "strings"
 
-func SimpleTokenizer(input string) []*Token {
+func SimpleTokenizer(input string) []*Term {
 	terms := strings.Split(input, " ")
-	tokens := make([]*Token, 0, 20)
+	tokens := make([]*Term, 0, 20)
 
 	for position, term := range terms {
-		tokens = append(tokens, &Token{
+		tokens = append(tokens, &Term{
 			Position: position + 1,
 			Term:     term,
 		})

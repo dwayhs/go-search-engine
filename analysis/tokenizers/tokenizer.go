@@ -1,8 +1,8 @@
 package tokenizers
 
-type Token struct {
+type Term struct {
 	Position int
 	Term     string
 }
 
-type Tokenizer func(input string) []*Token
+type Tokenizer func(input string) []*Term
