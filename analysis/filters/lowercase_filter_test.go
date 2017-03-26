@@ -17,8 +17,8 @@ type LowercaseFilterSuite struct{}
 var _ = check.Suite(&LowercaseFilterSuite{})
 
 func (s *LowercaseFilterSuite) TestLowercaseFilter(c *check.C) {
-	expected := []*analysis.Term{
-		&analysis.Term{Position: 1, Term: "ball"},
+	expected := []analysis.Term{
+		analysis.Term{Position: 1, Term: "ball"},
 	}
 	result := LowercaseFilter(analysis.Term{Position: 1, Term: "Ball"})
 	c.Check(result, check.DeepEquals, expected)

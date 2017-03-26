@@ -18,10 +18,10 @@ var _ = check.Suite(&SimpleTokenizerSuite{})
 
 func (s *SimpleTokenizerSuite) TestSimpleTokenizer(c *check.C) {
 
-	expected := []*analysis.Term{
-		&analysis.Term{Position: 1, Term: "The"},
-		&analysis.Term{Position: 2, Term: "lazy"},
-		&analysis.Term{Position: 3, Term: "dog"},
+	expected := []analysis.Term{
+		analysis.Term{Position: 1, Term: "The"},
+		analysis.Term{Position: 2, Term: "lazy"},
+		analysis.Term{Position: 3, Term: "dog"},
 	}
 	result := SimpleTokenizer("The lazy dog")
 	c.Check(result, check.DeepEquals, expected)
