@@ -36,8 +36,8 @@ func (s *IndexSuite) TestIndex(c *check.C) {
 
 	index.Index(docA)
 
-	result := index.Search("body", "quick brown fox")
-	expected := []core.Document{docA}
+	searchResult := index.Search("body", "quick fox")
 
-	c.Check(result, check.DeepEquals, expected)
+	expected := []core.Document{docA}
+	c.Check(searchResult, check.DeepEquals, expected)
 }
