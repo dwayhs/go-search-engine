@@ -15,7 +15,12 @@ type SimpleTokenizerSuite struct{}
 var _ = check.Suite(&SimpleTokenizerSuite{})
 
 func (s *SimpleTokenizerSuite) TestSimpleTokenizer(c *check.C) {
-	expected := []string{"The", "lazy", "dog"}
+
+	expected := []*Token{
+		&Token{Position: 1, Term: "The"},
+		&Token{Position: 2, Term: "lazy"},
+		&Token{Position: 3, Term: "dog"},
+	}
 	result := SimpleTokenizer("The lazy dog")
 	c.Check(result, check.DeepEquals, expected)
 }
