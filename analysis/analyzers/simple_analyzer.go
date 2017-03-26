@@ -5,7 +5,7 @@ import (
 	"github.com/dwayhs/go-search-engine/analysis/tokenizers"
 )
 
-func SimpleAnalyzer() Analyzer {
+func NewSimpleAnalyzer() Analyzer {
 	return Analyzer{
 		Tokenizer: tokenizers.SimpleTokenizer,
 		Filters: []filters.Filter{

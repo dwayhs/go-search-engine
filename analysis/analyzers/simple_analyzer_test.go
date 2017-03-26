@@ -29,7 +29,7 @@ func (s *SimpleAnalyzerSuite) TestLowercaseFilter(c *check.C) {
 		analysis.Term{Position: 9, Term: "dog"},
 	}
 
-	analyzer := SimpleAnalyzer()
+	analyzer := NewSimpleAnalyzer()
 	result := analyzer.Analyze("The quick brown fox jumps over the lazy dog")
 	c.Check(result, check.DeepEquals, expected)
 }
