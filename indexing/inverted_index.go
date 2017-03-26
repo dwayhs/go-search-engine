@@ -5,12 +5,12 @@ import (
 	"github.com/dwayhs/go-search-engine/core"
 )
 
-// TermIncidences values stores the incidentes of terms in documents.
+// TermIncidences values stores the incidents of terms in documents.
 type TermIncidences struct {
 	Incidences map[uint32]DocumentTermIncidences
 }
 
-// DocumentTermIncidences values stores the incidentes of terms in a specific documents.
+// DocumentTermIncidences values stores the incidents of terms in a specific documents.
 type DocumentTermIncidences struct {
 	Incidences []int
 }
