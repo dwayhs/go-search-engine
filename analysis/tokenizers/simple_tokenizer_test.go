@@ -3,6 +3,8 @@ package tokenizers
 import (
 	"testing"
 
+	"github.com/dwayhs/go-search-engine/analysis"
+
 	"gopkg.in/check.v1"
 )
 
@@ -16,10 +18,10 @@ var _ = check.Suite(&SimpleTokenizerSuite{})
 
 func (s *SimpleTokenizerSuite) TestSimpleTokenizer(c *check.C) {
 
-	expected := []*Term{
-		&Term{Position: 1, Term: "The"},
-		&Term{Position: 2, Term: "lazy"},
-		&Term{Position: 3, Term: "dog"},
+	expected := []*analysis.Term{
+		&analysis.Term{Position: 1, Term: "The"},
+		&analysis.Term{Position: 2, Term: "lazy"},
+		&analysis.Term{Position: 3, Term: "dog"},
 	}
 	result := SimpleTokenizer("The lazy dog")
 	c.Check(result, check.DeepEquals, expected)

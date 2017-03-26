@@ -1,8 +1,5 @@
 package tokenizers
 
-type Term struct {
-	Position int
-	Term     string
-}
+import "github.com/dwayhs/go-search-engine/analysis"
 
-type Tokenizer func(input string) []*Term
+type Tokenizer func(input string) []*analysis.Term
