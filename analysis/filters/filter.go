@@ -1,3 +1,5 @@
 package filters
 
-type Filter func(input string) []string
+import "github.com/dwayhs/go-search-engine/analysis"
+
+type Filter func(input string) []*analysis.Term

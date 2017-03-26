@@ -3,6 +3,8 @@ package filters
 import (
 	"testing"
 
+	"github.com/dwayhs/go-search-engine/analysis"
+
 	"gopkg.in/check.v1"
 )
 
@@ -15,7 +17,9 @@ type LowercaseFilterSuite struct{}
 var _ = check.Suite(&LowercaseFilterSuite{})
 
 func (s *LowercaseFilterSuite) TestLowercaseFilter(c *check.C) {
-	expected := []string{"ball"}
-	result := LowercaseFilter("Ball")
+	expected := []*analysis.Term{
+		&analysis.Term{Position: 1, Term: "ball"},
+	}
+	result := LowercaseFilter(analysis.Term{Position: 1, Term: "Ball"})
 	c.Check(result, check.DeepEquals, expected)
 }

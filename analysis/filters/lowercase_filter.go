@@ -1,7 +1,13 @@
 package filters
 
-import "strings"
+import (
+	"strings"
 
-func LowercaseFilter(term string) []string {
-	return []string{strings.ToLower(term)}
+	"github.com/dwayhs/go-search-engine/analysis"
+)
+
+func LowercaseFilter(term analysis.Term) []*analysis.Term {
+	return []*analysis.Term{
+		&analysis.Term{Position: term.Position, Term: strings.ToLower(term.Term)},
+	}
 }
