@@ -7,4 +7,7 @@ go:
   - 1.8
   - master
 
+install:
+  - go get gopkg.in/check.v1
+
 script: "make test"
