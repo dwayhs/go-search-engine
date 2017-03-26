@@ -45,8 +45,9 @@ func (i *InvertedIndex) Index(terms []analysis.Term, document core.Document) err
 }
 
 // Search queries the inverted index for documents satisfying the given query.
-func (i *InvertedIndex) Search(query string) []core.Document {
-	return []core.Document{}
+func (i *InvertedIndex) Search(terms []analysis.Term) []core.Document {
+	documentUIDS := i.query(terms)
+	return i.fetchDocuments(documentUIDS)
 }
 
 func (i *InvertedIndex) storeDocument(document core.Document) error {
@@ -85,4 +86,36 @@ func (i *InvertedIndex) addTermToIndex(term analysis.Term, document core.Documen
 	}
 
 	return nil
+}
+
+func (i *InvertedIndex) query(terms []analysis.Term) []uint32 {
+	resultingDocumentsHash := map[uint32]bool{}
+	resultingDocuments := make([]uint32, 0, 5)
+
+	for _, term := range terms {
+		if termIncidences, ok := i.InvertedIndex[term.Term]; ok {
+			for documentUID := range termIncidences.Incidences {
+				resultingDocumentsHash[documentUID] = true
+			}
+		}
+	}
+
+	for documentUID := range resultingDocumentsHash {
+		resultingDocuments = append(resultingDocuments, documentUID)
+	}
+
+	return resultingDocuments
+}
+
+func (i *InvertedIndex) fetchDocuments(documentUIDS []uint32) []core.Document {
+	resultingDocuments := make([]core.Document, 0, len(documentUIDS))
+
+	for _, documentUID := range documentUIDS {
+		resultingDocuments = append(
+			resultingDocuments,
+			i.DocumentStore[documentUID],
+		)
+	}
+
+	return resultingDocuments
 }
