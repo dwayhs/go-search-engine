@@ -6,6 +6,39 @@
 
 This project is intended for educational purposes.
 
+## Usage
+
+### Creating an index
+
+```go
+index := NewIndex(
+  indexing.NewInvertedIndex(),
+  Mapping{
+    Attributes: map[string]analyzers.Analyzer{
+      "body": analyzers.NewSimpleAnalyzer(),
+    },
+  },
+)
+```
+
+### Indexing
+
+```go
+docA := core.Document{
+  Attributes: map[string]string{
+    "body": "The quick brown fox jumps over the lazy dog",
+  },
+}
+
+index.Index(docA)
+```
+
+### Querying
+
+```go
+searchResult := index.Search("body", "quick fox")
+```
+
 # Credits
 
 Project inspired by the presentation ["Building A Python-Based Search Engine"](https://www.youtube.com/watch?v=cY7pE7vX6MU) on Pycon
