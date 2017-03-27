@@ -1,4 +1,4 @@
-package searchengine
+package gosearchengine
 
 import (
 	"testing"
