@@ -15,7 +15,7 @@ type DocumentTermIncidences struct {
 	Incidences []int
 }
 
-// InvertedIndex values control the inverted incex structure and its document store.
+// InvertedIndex values control the inverted index structure and its document store.
 type InvertedIndex struct {
 	InvertedIndex map[string]TermIncidences
 	DocumentStore map[uint32]core.Document

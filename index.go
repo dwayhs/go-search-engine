@@ -1,4 +1,4 @@
-// This is a Search Engine
+// Package gosearchengine implements a search engine
 //
 // It consists of several structures to implement
 // indexing and search of documents.
@@ -11,15 +11,18 @@ import (
 	"github.com/dwayhs/go-search-engine/indexing"
 )
 
+// Mapping values control analyzers of each document field
 type Mapping struct {
 	Attributes map[string]analyzers.Analyzer
 }
 
+// Index values control the index structures.
 type Index struct {
 	IndexStores map[string]indexing.IndexStore
 	Mapping     Mapping
 }
 
+// NewIndex initializes an InvertedIndex with the given Mapping.
 func NewIndex(mapping Mapping) *Index {
 	return &Index{
 		Mapping:     mapping,
@@ -27,6 +30,7 @@ func NewIndex(mapping Mapping) *Index {
 	}
 }
 
+// Index stores and indexes a document in the index.
 func (i *Index) Index(document core.Document) {
 	documentTerms := i.extractTermsFromDocument(document)
 
@@ -37,6 +41,7 @@ func (i *Index) Index(document core.Document) {
 	}
 }
 
+// Search queries the index for documents satisfying the given query.
 func (i *Index) Search(attribute string, query string) []core.Document {
 	analyzer := i.Mapping.Attributes[attribute]
 	terms := analyzer.Analyze(query)
