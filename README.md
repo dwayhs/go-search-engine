@@ -12,7 +12,6 @@ This project is intended for educational purposes.
 
 ```go
 index := NewIndex(
-  indexing.NewInvertedIndex(),
   Mapping{
     Attributes: map[string]analyzers.Analyzer{
       "body": analyzers.NewSimpleAnalyzer(),
