@@ -14,30 +14,51 @@ func Test(t *testing.T) {
 	check.TestingT(t)
 }
 
-type IndexSuite struct{}
+type IndexSuite struct {
+	DocA  core.Document
+	Index *Index
+}
 
 var _ = check.Suite(&IndexSuite{})
 
-func (s *IndexSuite) TestIndex(c *check.C) {
-	index := NewIndex(
+func (s *IndexSuite) SetUpSuite(c *check.C) {
+	s.Index = NewIndex(
 		indexing.NewInvertedIndex(),
 		Mapping{
 			Attributes: map[string]analyzers.Analyzer{
-				"body": analyzers.NewSimpleAnalyzer(),
+				"title": analyzers.NewSimpleAnalyzer(),
+				"body":  analyzers.NewSimpleAnalyzer(),
 			},
 		},
 	)
 
-	docA := core.Document{
+	s.DocA = core.Document{
+		UID: 1,
 		Attributes: map[string]string{
-			"body": "The quick brown fox jumps over the lazy dog",
+			"title": "some title",
+			"body":  "The quick brown fox jumps over the lazy dog",
 		},
 	}
 
-	index.Index(docA)
+	s.Index.Index(s.DocA)
+}
 
-	searchResult := index.Search("body", "quick fox")
+func (s *IndexSuite) TestQueryBodyHit(c *check.C) {
+	s.Index.Index(s.DocA)
 
-	expected := []core.Document{docA}
+	searchResult := s.Index.Search("body", "quick fox")
+	expected := []core.Document{s.DocA}
+	c.Check(searchResult, check.DeepEquals, expected)
+}
+
+func (s *IndexSuite) TestQueryTitleHit(c *check.C) {
+	searchResult := s.Index.Search("title", "some")
+	expected := []core.Document{s.DocA}
+	c.Check(searchResult, check.DeepEquals, expected)
+}
+
+func (s *IndexSuite) TestQueryTitleMiss(c *check.C) {
+	searchResult := s.Index.Search("title", "missing")
+	expected := []core.Document{}
 	c.Check(searchResult, check.DeepEquals, expected)
 }
