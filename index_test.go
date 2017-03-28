@@ -5,7 +5,6 @@ import (
 
 	"github.com/dwayhs/go-search-engine/analysis/analyzers"
 	"github.com/dwayhs/go-search-engine/core"
-	"github.com/dwayhs/go-search-engine/indexing"
 
 	"gopkg.in/check.v1"
 )
@@ -23,7 +22,6 @@ var _ = check.Suite(&IndexSuite{})
 
 func (s *IndexSuite) SetUpSuite(c *check.C) {
 	s.Index = NewIndex(
-		indexing.NewInvertedIndex(),
 		Mapping{
 			Attributes: map[string]analyzers.Analyzer{
 				"title": analyzers.NewSimpleAnalyzer(),
@@ -43,7 +41,7 @@ func (s *IndexSuite) SetUpSuite(c *check.C) {
 	s.Index.Index(s.DocA)
 }
 
-func (s *IndexSuite) TestQueryBodyHit(c *check.C) {
+func (s *IndexSuite) TestQueryPresentBodyShouldHit(c *check.C) {
 	s.Index.Index(s.DocA)
 
 	searchResult := s.Index.Search("body", "quick fox")
@@ -51,13 +49,21 @@ func (s *IndexSuite) TestQueryBodyHit(c *check.C) {
 	c.Check(searchResult, check.DeepEquals, expected)
 }
 
-func (s *IndexSuite) TestQueryTitleHit(c *check.C) {
+func (s *IndexSuite) TestQueryTitleTermInBodyShouldMiss(c *check.C) {
+	s.Index.Index(s.DocA)
+
+	searchResult := s.Index.Search("body", "some")
+	expected := []core.Document{}
+	c.Check(searchResult, check.DeepEquals, expected)
+}
+
+func (s *IndexSuite) TestQueryPresentTitleShouldHit(c *check.C) {
 	searchResult := s.Index.Search("title", "some")
 	expected := []core.Document{s.DocA}
 	c.Check(searchResult, check.DeepEquals, expected)
 }
 
-func (s *IndexSuite) TestQueryTitleMiss(c *check.C) {
+func (s *IndexSuite) TestQueryMissingTitleShouldMiss(c *check.C) {
 	searchResult := s.Index.Search("title", "missing")
 	expected := []core.Document{}
 	c.Check(searchResult, check.DeepEquals, expected)

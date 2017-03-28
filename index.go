@@ -16,42 +16,57 @@ type Mapping struct {
 }
 
 type Index struct {
-	IndexStore indexing.IndexStore
-	Mapping    Mapping
+	IndexStores map[string]indexing.IndexStore
+	Mapping     Mapping
 }
 
-func NewIndex(indexStore indexing.IndexStore, mapping Mapping) *Index {
+func NewIndex(mapping Mapping) *Index {
 	return &Index{
-		IndexStore: indexStore,
-		Mapping:    mapping,
+		Mapping:     mapping,
+		IndexStores: map[string]indexing.IndexStore{},
 	}
 }
 
 func (i *Index) Index(document core.Document) {
-	terms := i.extractTermsFromDocument(document)
+	documentTerms := i.extractTermsFromDocument(document)
 
-	i.IndexStore.Index(terms, document)
+	for attribute, terms := range documentTerms {
+		indexStore := i.getAttributeIndexStore(attribute)
+
+		indexStore.Index(terms, document)
+	}
 }
 
 func (i *Index) Search(attribute string, query string) []core.Document {
 	analyzer := i.Mapping.Attributes[attribute]
 	terms := analyzer.Analyze(query)
 
-	return i.IndexStore.Search(terms)
+	indexStore := i.getAttributeIndexStore(attribute)
+
+	return indexStore.Search(terms)
 }
 
-func (i *Index) extractTermsFromDocument(document core.Document) []analysis.Term {
-	terms := make([]analysis.Term, 0, 20)
+func (i *Index) extractTermsFromDocument(document core.Document) map[string][]analysis.Term {
+	terms := map[string][]analysis.Term{}
 
 	for attribute := range i.Mapping.Attributes {
 		analyzer := i.Mapping.Attributes[attribute]
 
 		if attributeValue, ok := document.Attributes[attribute]; ok {
 			attributeTerms := analyzer.Analyze(attributeValue)
-			terms = append(terms, attributeTerms...)
-		}
 
+			terms[attribute] = attributeTerms
+		}
 	}
 
 	return terms
+}
+
+func (i *Index) getAttributeIndexStore(attribute string) indexing.IndexStore {
+	if indexStore, ok := i.IndexStores[attribute]; ok {
+		return indexStore
+	}
+
+	i.IndexStores[attribute] = indexing.NewInvertedIndex()
+	return i.IndexStores[attribute]
 }
