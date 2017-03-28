@@ -6,11 +6,13 @@ import (
 	"github.com/dwayhs/go-search-engine/analysis/tokenizers"
 )
 
+// Analyzer values control the analyzer process, first tokenize than filter each token
 type Analyzer struct {
 	Tokenizer tokenizers.Tokenizer
 	Filters   []filters.Filter
 }
 
+// Analyze executes the analisis process and returns a list of terms
 func (a *Analyzer) Analyze(input string) []analysis.Term {
 	terms := a.Tokenizer(input)
 
