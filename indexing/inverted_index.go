@@ -30,62 +30,40 @@ func NewInvertedIndex() *InvertedIndex {
 }
 
 // Index stores and indexes a document for the given terms.
-func (i *InvertedIndex) Index(terms []analysis.Term, document core.Document) error {
-	err := i.storeDocument(document)
-	if err != nil {
-		return err
-	}
-
-	err = i.addTermsToIndex(terms, document)
-	if err != nil {
-		return err
-	}
-
-	return nil
+func (i *InvertedIndex) Index(terms []analysis.Term, documentUID uint32) {
+	i.addTermsToIndex(terms, documentUID)
 }
 
 // Search queries the inverted index for documents satisfying the given query.
-func (i *InvertedIndex) Search(terms []analysis.Term) []core.Document {
-	documentUIDS := i.query(terms)
-	return i.fetchDocuments(documentUIDS)
+func (i *InvertedIndex) Search(terms []analysis.Term) []uint32 {
+	return i.query(terms)
 }
 
-func (i *InvertedIndex) storeDocument(document core.Document) error {
-	i.DocumentStore[document.UID] = document
-
-	return nil
-}
-
-func (i *InvertedIndex) addTermsToIndex(terms []analysis.Term, document core.Document) error {
+func (i *InvertedIndex) addTermsToIndex(terms []analysis.Term, documentUID uint32) {
 	for _, term := range terms {
-		i.addTermToIndex(term, document)
+		i.addTermToIndex(term, documentUID)
 	}
-
-	return nil
 }
 
-func (i *InvertedIndex) addTermToIndex(term analysis.Term, document core.Document) error {
-
+func (i *InvertedIndex) addTermToIndex(term analysis.Term, documentUID uint32) {
 	if _, ok := i.InvertedIndex[term.Term]; !ok {
 		i.InvertedIndex[term.Term] = TermIncidences{
 			Incidences: map[uint32]DocumentTermIncidences{},
 		}
 	}
 
-	if _, ok := i.InvertedIndex[term.Term].Incidences[document.UID]; !ok {
-		i.InvertedIndex[term.Term].Incidences[document.UID] = DocumentTermIncidences{
+	if _, ok := i.InvertedIndex[term.Term].Incidences[documentUID]; !ok {
+		i.InvertedIndex[term.Term].Incidences[documentUID] = DocumentTermIncidences{
 			Incidences: []int{term.Position},
 		}
 	} else {
-		i.InvertedIndex[term.Term].Incidences[document.UID] = DocumentTermIncidences{
+		i.InvertedIndex[term.Term].Incidences[documentUID] = DocumentTermIncidences{
 			Incidences: append(
-				i.InvertedIndex[term.Term].Incidences[document.UID].Incidences,
+				i.InvertedIndex[term.Term].Incidences[documentUID].Incidences,
 				term.Position,
 			),
 		}
 	}
-
-	return nil
 }
 
 func (i *InvertedIndex) query(terms []analysis.Term) []uint32 {
@@ -102,19 +80,6 @@ func (i *InvertedIndex) query(terms []analysis.Term) []uint32 {
 
 	for documentUID := range resultingDocumentsHash {
 		resultingDocuments = append(resultingDocuments, documentUID)
-	}
-
-	return resultingDocuments
-}
-
-func (i *InvertedIndex) fetchDocuments(documentUIDS []uint32) []core.Document {
-	resultingDocuments := make([]core.Document, 0, len(documentUIDS))
-
-	for _, documentUID := range documentUIDS {
-		resultingDocuments = append(
-			resultingDocuments,
-			i.DocumentStore[documentUID],
-		)
 	}
 
 	return resultingDocuments

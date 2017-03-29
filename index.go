@@ -18,26 +18,30 @@ type Mapping struct {
 
 // Index values control the index structures.
 type Index struct {
-	IndexStores map[string]indexing.IndexStore
-	Mapping     Mapping
+	InvertedIndexes map[string]*indexing.InvertedIndex
+	DocumentStore   *indexing.DocumentStore
+	Mapping         Mapping
 }
 
 // NewIndex initializes an InvertedIndex with the given Mapping.
 func NewIndex(mapping Mapping) *Index {
 	return &Index{
-		Mapping:     mapping,
-		IndexStores: map[string]indexing.IndexStore{},
+		Mapping:         mapping,
+		DocumentStore:   indexing.NewDocumentStore(),
+		InvertedIndexes: map[string]*indexing.InvertedIndex{},
 	}
 }
 
 // Index stores and indexes a document in the index.
 func (i *Index) Index(document core.Document) {
+	i.DocumentStore.Store(document.UID, document)
+
 	documentTerms := i.extractTermsFromDocument(document)
 
 	for attribute, terms := range documentTerms {
 		indexStore := i.getAttributeIndexStore(attribute)
 
-		indexStore.Index(terms, document)
+		indexStore.Index(terms, document.UID)
 	}
 }
 
@@ -48,7 +52,8 @@ func (i *Index) Search(attribute string, query string) []core.Document {
 
 	indexStore := i.getAttributeIndexStore(attribute)
 
-	return indexStore.Search(terms)
+	documentUIDs := indexStore.Search(terms)
+	return i.DocumentStore.FetchDocuments(documentUIDs)
 }
 
 func (i *Index) extractTermsFromDocument(document core.Document) map[string][]analysis.Term {
@@ -67,11 +72,11 @@ func (i *Index) extractTermsFromDocument(document core.Document) map[string][]an
 	return terms
 }
 
-func (i *Index) getAttributeIndexStore(attribute string) indexing.IndexStore {
-	if indexStore, ok := i.IndexStores[attribute]; ok {
+func (i *Index) getAttributeIndexStore(attribute string) *indexing.InvertedIndex {
+	if indexStore, ok := i.InvertedIndexes[attribute]; ok {
 		return indexStore
 	}
 
-	i.IndexStores[attribute] = indexing.NewInvertedIndex()
-	return i.IndexStores[attribute]
+	i.InvertedIndexes[attribute] = indexing.NewInvertedIndex()
+	return i.InvertedIndexes[attribute]
 }

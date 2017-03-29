@@ -4,31 +4,24 @@ import (
 	"testing"
 
 	"github.com/dwayhs/go-search-engine/analysis"
-	"github.com/dwayhs/go-search-engine/core"
 
 	"gopkg.in/check.v1"
 )
 
-func Test(t *testing.T) {
+func TestInvertedIndex(t *testing.T) {
 	check.TestingT(t)
 }
 
 type InvertedIndexSuite struct {
-	DocA  core.Document
-	Terms []analysis.Term
+	DocAUID   uint32
+	DocATerms []analysis.Term
 }
 
 var _ = check.Suite(&InvertedIndexSuite{})
 
 func (s *InvertedIndexSuite) SetUpSuite(c *check.C) {
-	s.DocA = core.Document{
-		UID: 1,
-		Attributes: map[string]string{
-			"body": "The quick brown fox jumps over the lazy dog",
-		},
-	}
-
-	s.Terms = []analysis.Term{
+	s.DocAUID = 1
+	s.DocATerms = []analysis.Term{
 		analysis.Term{Position: 1, Term: "the"},
 		analysis.Term{Position: 2, Term: "quick"},
 		analysis.Term{Position: 3, Term: "brown"},
@@ -44,7 +37,7 @@ func (s *InvertedIndexSuite) SetUpSuite(c *check.C) {
 func (s *InvertedIndexSuite) TestIndex(c *check.C) {
 	invertedIndex := NewInvertedIndex()
 
-	invertedIndex.Index(s.Terms, s.DocA)
+	invertedIndex.Index(s.DocATerms, s.DocAUID)
 
 	expectedInvertedIndex := map[string]TermIncidences{
 		"the": TermIncidences{
@@ -89,18 +82,13 @@ func (s *InvertedIndexSuite) TestIndex(c *check.C) {
 		},
 	}
 
-	expectedDocumentStore := map[uint32]core.Document{
-		1: s.DocA,
-	}
-
 	c.Check(invertedIndex.InvertedIndex, check.DeepEquals, expectedInvertedIndex)
-	c.Check(invertedIndex.DocumentStore, check.DeepEquals, expectedDocumentStore)
 }
 
 func (s *InvertedIndexSuite) TestSearch(c *check.C) {
 	invertedIndex := NewInvertedIndex()
 
-	invertedIndex.Index(s.Terms, s.DocA)
+	invertedIndex.Index(s.DocATerms, s.DocAUID)
 
 	searchTerms := []analysis.Term{
 		analysis.Term{Position: 1, Term: "brown"},
@@ -108,7 +96,7 @@ func (s *InvertedIndexSuite) TestSearch(c *check.C) {
 	}
 
 	documents := invertedIndex.Search(searchTerms)
-	expectedDocuments := []core.Document{s.DocA}
+	expectedDocumentUIDs := []uint32{s.DocAUID}
 
-	c.Check(documents, check.DeepEquals, expectedDocuments)
+	c.Check(documents, check.DeepEquals, expectedDocumentUIDs)
 }
