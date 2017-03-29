@@ -18,15 +18,15 @@ var _ = check.Suite(&SimpleAnalyzerSuite{})
 
 func (s *SimpleAnalyzerSuite) TestLowercaseFilter(c *check.C) {
 	expected := []analysis.Term{
-		analysis.Term{Position: 1, Term: "the"},
-		analysis.Term{Position: 2, Term: "quick"},
-		analysis.Term{Position: 3, Term: "brown"},
-		analysis.Term{Position: 4, Term: "fox"},
-		analysis.Term{Position: 5, Term: "jumps"},
-		analysis.Term{Position: 6, Term: "over"},
-		analysis.Term{Position: 7, Term: "the"},
-		analysis.Term{Position: 8, Term: "lazy"},
-		analysis.Term{Position: 9, Term: "dog"},
+		{Position: 1, Term: "the"},
+		{Position: 2, Term: "quick"},
+		{Position: 3, Term: "brown"},
+		{Position: 4, Term: "fox"},
+		{Position: 5, Term: "jumps"},
+		{Position: 6, Term: "over"},
+		{Position: 7, Term: "the"},
+		{Position: 8, Term: "lazy"},
+		{Position: 9, Term: "dog"},
 	}
 
 	analyzer := NewSimpleAnalyzer()

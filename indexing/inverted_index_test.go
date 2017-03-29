@@ -22,15 +22,15 @@ var _ = check.Suite(&InvertedIndexSuite{})
 func (s *InvertedIndexSuite) SetUpSuite(c *check.C) {
 	s.DocAUID = 1
 	s.DocATerms = []analysis.Term{
-		analysis.Term{Position: 1, Term: "the"},
-		analysis.Term{Position: 2, Term: "quick"},
-		analysis.Term{Position: 3, Term: "brown"},
-		analysis.Term{Position: 4, Term: "fox"},
-		analysis.Term{Position: 5, Term: "jumps"},
-		analysis.Term{Position: 6, Term: "over"},
-		analysis.Term{Position: 7, Term: "the"},
-		analysis.Term{Position: 8, Term: "lazy"},
-		analysis.Term{Position: 9, Term: "dog"},
+		{Position: 1, Term: "the"},
+		{Position: 2, Term: "quick"},
+		{Position: 3, Term: "brown"},
+		{Position: 4, Term: "fox"},
+		{Position: 5, Term: "jumps"},
+		{Position: 6, Term: "over"},
+		{Position: 7, Term: "the"},
+		{Position: 8, Term: "lazy"},
+		{Position: 9, Term: "dog"},
 	}
 }
 
@@ -40,44 +40,44 @@ func (s *InvertedIndexSuite) TestIndex(c *check.C) {
 	invertedIndex.Index(s.DocATerms, s.DocAUID)
 
 	expectedInvertedIndex := map[string]TermIncidences{
-		"the": TermIncidences{
+		"the": {
 			Incidences: map[uint32]DocumentTermIncidences{
-				1: DocumentTermIncidences{Incidences: []int{1, 7}},
+				1: {Incidences: []int{1, 7}},
 			},
 		},
-		"quick": TermIncidences{
+		"quick": {
 			Incidences: map[uint32]DocumentTermIncidences{
-				1: DocumentTermIncidences{Incidences: []int{2}},
+				1: {Incidences: []int{2}},
 			},
 		},
-		"brown": TermIncidences{
+		"brown": {
 			Incidences: map[uint32]DocumentTermIncidences{
-				1: DocumentTermIncidences{Incidences: []int{3}},
+				1: {Incidences: []int{3}},
 			},
 		},
-		"fox": TermIncidences{
+		"fox": {
 			Incidences: map[uint32]DocumentTermIncidences{
-				1: DocumentTermIncidences{Incidences: []int{4}},
+				1: {Incidences: []int{4}},
 			},
 		},
-		"jumps": TermIncidences{
+		"jumps": {
 			Incidences: map[uint32]DocumentTermIncidences{
-				1: DocumentTermIncidences{Incidences: []int{5}},
+				1: {Incidences: []int{5}},
 			},
 		},
-		"over": TermIncidences{
+		"over": {
 			Incidences: map[uint32]DocumentTermIncidences{
-				1: DocumentTermIncidences{Incidences: []int{6}},
+				1: {Incidences: []int{6}},
 			},
 		},
-		"lazy": TermIncidences{
+		"lazy": {
 			Incidences: map[uint32]DocumentTermIncidences{
-				1: DocumentTermIncidences{Incidences: []int{8}},
+				1: {Incidences: []int{8}},
 			},
 		},
-		"dog": TermIncidences{
+		"dog": {
 			Incidences: map[uint32]DocumentTermIncidences{
-				1: DocumentTermIncidences{Incidences: []int{9}},
+				1: {Incidences: []int{9}},
 			},
 		},
 	}
@@ -91,8 +91,8 @@ func (s *InvertedIndexSuite) TestSearch(c *check.C) {
 	invertedIndex.Index(s.DocATerms, s.DocAUID)
 
 	searchTerms := []analysis.Term{
-		analysis.Term{Position: 1, Term: "brown"},
-		analysis.Term{Position: 2, Term: "fox"},
+		{Position: 1, Term: "brown"},
+		{Position: 2, Term: "fox"},
 	}
 
 	documents := invertedIndex.Search(searchTerms)
