@@ -49,7 +49,7 @@ func (s *DocumentStoreSuite) TestFetchDocuments(c *check.C) {
 	documentStore.Store(s.DocA.UID, s.DocA)
 	documentStore.Store(s.DocB.UID, s.DocB)
 
-	fetchedDocuments := documentStore.FetchDocuments([]uint32{
+	fetchedDocuments := documentStore.FetchDocuments([]core.DocumentUID{
 		s.DocA.UID,
 		s.DocB.UID,
 	})

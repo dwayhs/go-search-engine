@@ -6,28 +6,28 @@ import (
 
 // DocumentStore values control the storage of documents.
 type DocumentStore struct {
-	StoreMap map[uint32]core.Document
+	StoreMap map[core.DocumentUID]core.Document
 }
 
 // NewDocumentStore initializes a DocumentStore with an empty store.
 func NewDocumentStore() *DocumentStore {
 	return &DocumentStore{
-		StoreMap: map[uint32]core.Document{},
+		StoreMap: map[core.DocumentUID]core.Document{},
 	}
 }
 
 // Store stores a document for the given UID.
-func (i *DocumentStore) Store(UID uint32, document core.Document) {
+func (i *DocumentStore) Store(UID core.DocumentUID, document core.Document) {
 	i.StoreMap[UID] = document
 }
 
 // Fetch retrieves a document with the given documentUID.
-func (i *DocumentStore) Fetch(documentUID uint32) core.Document {
+func (i *DocumentStore) Fetch(documentUID core.DocumentUID) core.Document {
 	return i.StoreMap[documentUID]
 }
 
 // FetchDocuments retrieves a list of document with the given documentUIDS.
-func (i *DocumentStore) FetchDocuments(documentUIDS []uint32) []core.Document {
+func (i *DocumentStore) FetchDocuments(documentUIDS []core.DocumentUID) []core.Document {
 	resultingDocuments := make([]core.Document, 0, len(documentUIDS))
 
 	for _, documentUID := range documentUIDS {

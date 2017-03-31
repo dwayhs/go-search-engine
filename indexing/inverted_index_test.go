@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/dwayhs/go-search-engine/analysis"
+	"github.com/dwayhs/go-search-engine/core"
 
 	"gopkg.in/check.v1"
 )
@@ -13,7 +14,7 @@ func TestInvertedIndex(t *testing.T) {
 }
 
 type InvertedIndexSuite struct {
-	DocAUID   uint32
+	DocAUID   core.DocumentUID
 	DocATerms []analysis.Term
 }
 
@@ -41,42 +42,42 @@ func (s *InvertedIndexSuite) TestIndex(c *check.C) {
 
 	expectedInvertedIndex := map[string]TermIncidences{
 		"the": {
-			Incidences: map[uint32]DocumentTermIncidences{
+			Incidences: map[core.DocumentUID]DocumentTermIncidences{
 				1: {Incidences: []int{1, 7}},
 			},
 		},
 		"quick": {
-			Incidences: map[uint32]DocumentTermIncidences{
+			Incidences: map[core.DocumentUID]DocumentTermIncidences{
 				1: {Incidences: []int{2}},
 			},
 		},
 		"brown": {
-			Incidences: map[uint32]DocumentTermIncidences{
+			Incidences: map[core.DocumentUID]DocumentTermIncidences{
 				1: {Incidences: []int{3}},
 			},
 		},
 		"fox": {
-			Incidences: map[uint32]DocumentTermIncidences{
+			Incidences: map[core.DocumentUID]DocumentTermIncidences{
 				1: {Incidences: []int{4}},
 			},
 		},
 		"jumps": {
-			Incidences: map[uint32]DocumentTermIncidences{
+			Incidences: map[core.DocumentUID]DocumentTermIncidences{
 				1: {Incidences: []int{5}},
 			},
 		},
 		"over": {
-			Incidences: map[uint32]DocumentTermIncidences{
+			Incidences: map[core.DocumentUID]DocumentTermIncidences{
 				1: {Incidences: []int{6}},
 			},
 		},
 		"lazy": {
-			Incidences: map[uint32]DocumentTermIncidences{
+			Incidences: map[core.DocumentUID]DocumentTermIncidences{
 				1: {Incidences: []int{8}},
 			},
 		},
 		"dog": {
-			Incidences: map[uint32]DocumentTermIncidences{
+			Incidences: map[core.DocumentUID]DocumentTermIncidences{
 				1: {Incidences: []int{9}},
 			},
 		},
@@ -96,7 +97,7 @@ func (s *InvertedIndexSuite) TestSearch(c *check.C) {
 	}
 
 	documents := invertedIndex.Search(searchTerms)
-	expectedDocumentUIDs := []uint32{s.DocAUID}
+	expectedDocumentUIDs := []core.DocumentUID{s.DocAUID}
 
 	c.Check(documents, check.DeepEquals, expectedDocumentUIDs)
 }

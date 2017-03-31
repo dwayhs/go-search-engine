@@ -7,7 +7,7 @@ import (
 
 // TermIncidences values stores the incidents of terms in documents.
 type TermIncidences struct {
-	Incidences map[uint32]DocumentTermIncidences
+	Incidences map[core.DocumentUID]DocumentTermIncidences
 }
 
 // DocumentTermIncidences values stores the incidents of terms in a specific documents.
@@ -18,37 +18,37 @@ type DocumentTermIncidences struct {
 // InvertedIndex values control the inverted index structure and its document store.
 type InvertedIndex struct {
 	InvertedIndex map[string]TermIncidences
-	DocumentStore map[uint32]core.Document
+	DocumentStore map[core.DocumentUID]core.Document
 }
 
 // NewInvertedIndex initializes an InvertedIndex with an empty inverted index and document store.
 func NewInvertedIndex() *InvertedIndex {
 	return &InvertedIndex{
 		InvertedIndex: map[string]TermIncidences{},
-		DocumentStore: map[uint32]core.Document{},
+		DocumentStore: map[core.DocumentUID]core.Document{},
 	}
 }
 
 // Index stores and indexes a document for the given terms.
-func (i *InvertedIndex) Index(terms []analysis.Term, documentUID uint32) {
+func (i *InvertedIndex) Index(terms []analysis.Term, documentUID core.DocumentUID) {
 	i.addTermsToIndex(terms, documentUID)
 }
 
 // Search queries the inverted index for documents satisfying the given query.
-func (i *InvertedIndex) Search(terms []analysis.Term) []uint32 {
+func (i *InvertedIndex) Search(terms []analysis.Term) []core.DocumentUID {
 	return i.query(terms)
 }
 
-func (i *InvertedIndex) addTermsToIndex(terms []analysis.Term, documentUID uint32) {
+func (i *InvertedIndex) addTermsToIndex(terms []analysis.Term, documentUID core.DocumentUID) {
 	for _, term := range terms {
 		i.addTermToIndex(term, documentUID)
 	}
 }
 
-func (i *InvertedIndex) addTermToIndex(term analysis.Term, documentUID uint32) {
+func (i *InvertedIndex) addTermToIndex(term analysis.Term, documentUID core.DocumentUID) {
 	if _, ok := i.InvertedIndex[term.Term]; !ok {
 		i.InvertedIndex[term.Term] = TermIncidences{
-			Incidences: map[uint32]DocumentTermIncidences{},
+			Incidences: map[core.DocumentUID]DocumentTermIncidences{},
 		}
 	}
 
@@ -66,9 +66,9 @@ func (i *InvertedIndex) addTermToIndex(term analysis.Term, documentUID uint32) {
 	}
 }
 
-func (i *InvertedIndex) query(terms []analysis.Term) []uint32 {
-	resultingDocumentsHash := map[uint32]bool{}
-	resultingDocuments := make([]uint32, 0, 5)
+func (i *InvertedIndex) query(terms []analysis.Term) []core.DocumentUID {
+	resultingDocumentsHash := map[core.DocumentUID]bool{}
+	resultingDocuments := make([]core.DocumentUID, 0, 5)
 
 	for _, term := range terms {
 		if termIncidences, ok := i.InvertedIndex[term.Term]; ok {
